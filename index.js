@@ -3,7 +3,7 @@ const formatStats = require('@vue/cli-service/lib/commands/build/formatStats')
 const rimraf = require('rimraf')
 
 const { getWebpackConfig } = require('./lib/webpack')
-const { createServer } = require('./lib/server')
+const { MyEntrypoint } = require('./lib/server')
 const config = require('./lib/config')
 const defaultConfig = require('./lib/default-config')
 
@@ -78,10 +78,11 @@ module.exports = (api, options) => {
     }
 
     config.port = port
-
-    await createServer({
-      port,
-    })
+    let ep = new MyEntrypoint();
+    await ep.startServer(port)
+    // await createServer({
+    //   port,
+    // })
   })
 }
 
