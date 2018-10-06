@@ -78,7 +78,7 @@ module.exports = (api, options) => {
     }
 
     config.port = port
-    await new MyEntrypoint();
+    await new MyEntrypoint(port);
     // await createServer({
     //   port,
     // })
