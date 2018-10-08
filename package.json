@@ -38,6 +38,7 @@
     "loader-utils": "^1.1.0",
     "lru-cache": "^4.1.3",
     "memory-fs": "^0.4.1",
+    "pmx": "^1.6.7",
     "portfinder": "^1.0.17",
     "querystring": "^0.2.0",
     "rimraf": "^2.6.2",
