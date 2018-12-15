@@ -65,7 +65,7 @@ module.exports = (api, options) => {
       compiler.watch({}, onCompilationComplete)
     } else {
       for (let i of compilers) {
-        compiler.run(onCompilationComplete)
+        i.run(onCompilationComplete)
       }
     }
   })
