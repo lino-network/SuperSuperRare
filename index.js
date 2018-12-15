@@ -23,13 +23,17 @@ module.exports = (api, options) => {
     description: 'build for production (SSR)',
   }, async (args) => {
     const options = service.projectOptions
-
+    const pages = require('./lib/pages.js')
+    let compilers = []
+    let clientConfig
+    let serverConfig
+    for (let i of Object.keys(pages)) {
+      clientConfig = getWebpackConfig({ service, target: 'client', page: i })
+      serverConfig = getWebpackConfig({ service, target: 'server', page: i })
+      compilers.push(webpack([clientConfig, serverConfig]))
+    }
     rimraf.sync(api.resolve(config.distPath))
 
-    const clientConfig = getWebpackConfig({ service, target: 'client' })
-    const serverConfig = getWebpackConfig({ service, target: 'server' })
-
-    const compiler = webpack([clientConfig, serverConfig])
     const onCompilationComplete = (err, stats) => {
       if (err) {
         // eslint-disable-next-line
@@ -60,7 +64,9 @@ module.exports = (api, options) => {
     if (args.watch) {
       compiler.watch({}, onCompilationComplete)
     } else {
-      compiler.run(onCompilationComplete)
+      for (let i of compilers) {
+        compiler.run(onCompilationComplete)
+      }
     }
   })
 
