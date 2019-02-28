@@ -15,6 +15,9 @@ module.exports = (api, options) => {
 
   api.registerCommand('ssr:build', {
     description: 'build for production (SSR)',
+    options: {
+      '-s, --source [level]': 'specify sourcemap completeness',
+    },
   }, async (args) => {
     const webpack = require('webpack')
     const rimraf = require('rimraf')
@@ -25,8 +28,8 @@ module.exports = (api, options) => {
     rimraf.sync(api.resolve(config.distPath))
 
     const { getWebpackConfig } = require('./lib/webpack')
-    const clientConfig = getWebpackConfig({ service, target: 'client' })
-    const serverConfig = getWebpackConfig({ service, target: 'server' })
+    const clientConfig = getWebpackConfig({ service, target: 'client' }, args.level === 'complete')
+    const serverConfig = getWebpackConfig({ service, target: 'server' }, args.level === 'complete')
 
     const compiler = webpack([clientConfig, serverConfig])
     const onCompilationComplete = (err, stats) => {
