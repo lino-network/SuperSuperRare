@@ -28,8 +28,8 @@ module.exports = (api, options) => {
     rimraf.sync(api.resolve(config.distPath))
 
     const { getWebpackConfig } = require('./lib/webpack')
-    const clientConfig = getWebpackConfig({ service, target: 'client' }, args.level === 'complete')
-    const serverConfig = getWebpackConfig({ service, target: 'server' }, args.level === 'complete')
+    const clientConfig = getWebpackConfig({ service, target: 'client' }, args.source === 'complete')
+    const serverConfig = getWebpackConfig({ service, target: 'server' }, args.source === 'complete')
 
     const compiler = webpack([clientConfig, serverConfig])
     const onCompilationComplete = (err, stats) => {
