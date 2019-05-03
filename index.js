@@ -17,6 +17,7 @@ module.exports = (api, options) => {
     description: 'build for production (SSR)',
     options: {
       '-s, --source [level]': 'specify sourcemap completeness',
+      '-ssr --ssr [ssr]' : 'specify if this build is for ssr', 
     },
   }, async (args) => {
     const webpack = require('webpack')
@@ -27,11 +28,20 @@ module.exports = (api, options) => {
 
     rimraf.sync(api.resolve(config.distPath))
 
-    const { getWebpackConfig } = require('./lib/webpack')
-    const clientConfig = getWebpackConfig({ service, target: 'client' }, args.source === 'complete')
-    const serverConfig = getWebpackConfig({ service, target: 'server' }, args.source === 'complete')
+    const { getWebpackConfig, changeEntryPoint } = require('./lib/webpack')
 
-    const compiler = webpack([clientConfig, serverConfig])
+    let clientConfig
+    let serverConfig
+    let compiler
+  
+    if (args.ssr === 'true') {
+      clientConfig = getWebpackConfig({ service, target: 'client' }, args.source === 'complete', args.ssr === 'true')
+      serverConfig = getWebpackConfig({ service, target: 'server' }, args.source === 'complete', args.ssr === 'true')
+      compiler = webpack([clientConfig, serverConfig])
+    } else {
+      compiler = webpack([changeEntryPoint()])
+    }
+  
     const onCompilationComplete = (err, stats) => {
       if (err) {
         // eslint-disable-next-line
